@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+    {% block content %}
+        {{ super() }}
+        <hr>
+        <h2>Список доступных заданий</h2>
+        <ul class="list-posts">
+            {% for p in posts %}
+        <li>
+            <p class="title"><label>Id задания: </label> <a href="{{ url_for('showTask', id_task=p.task_number) }}">{{ p.task_number }}</a></p>
+            <p class="annonce"><label>Дата создания: </label>{{ p.creation_date }}</p>
+            <p class="annonce"><label>Дата завершения: </label>{{ p.finish_date }}</p>
+            <p class="annonce"><label>Дедлайн: </label>{{ p.deadline_date}}</p>
+            <p class="annonce"><label>Дата принятия: </label>{{ p.acception_date}}</p>
+            <p class="annonce"><label>Завершено задание? </label>{{ p.task_status}}</p>
+            <p class="annonce"><label>Код контракта: </label>{{ p.contract_number}}</p>
+            <p class="annonce"><label>Код автора: </label>{{ p.author_number}}</p>
+            <p class="annonce"><label>Код исполнителя: </label>{{ p.executor_number}}</p>
+            <p class="annonce"><label>Код клиента: </label>{{ p.client_number}}</p>
+            <p class="annonce"><label>Код приоритета: </label>{{ p.task_priority}}</p>
+        </li>
+        {% endfor %}
+        </ul>
+    {% endblock %}
