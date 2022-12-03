@@ -119,11 +119,15 @@ def addTask():
 
 @app.route('/index')
 @login_required
+
 def index():
-    db = connection_db("postgres", "frerard2203")
-    with db:
-        print("главная")
-    return render_template('index.html', menu=getMenu(), posts=getTaskAnounce(db))
+    if 'current_user' in session:
+        user = {'employee_login': session.get('current_user', 'secret')[4]}
+        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+        posts=getTaskAnounce(db)
+        with db:
+            print("главная")
+    return render_template('index.html', menu=getMenu(), posts=posts)
 
 @app.route('/task/<int:id_task>')
 @login_required
