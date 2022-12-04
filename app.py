@@ -98,6 +98,8 @@ def register():
 @login_required
 def clients():
     db = connection_db("postgres", "74NDF*305c")
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     with db:
         print("получаем клиентов")
     return render_template('clients_list.html', menu=getMenu(), posts=getClientAnounce(db), manager=user_is_manager)
@@ -105,8 +107,10 @@ def clients():
 @app.route('/edit-tasks', methods=["POST", "GET"])
 @login_required
 def addTask():
+    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     if request.method == "POST":
-        db = connection_db("postgres", "74NDF*305c")
         with db:
             if len(request.form['name']) > 0 and len(request.form['post']) > 0:
                 res = addtask(request.form['name'], request.form['post'], db)
@@ -116,11 +120,10 @@ def addTask():
                     flash('Регион успешно добавлен', category='succes')
             else:
                 flash('Ошибка добавления региона', category='error')
-    return render_template('add_task.html', menu=getMenu(), title='Добавление задания', manager=user_is_manager)
+    return render_template('add_task.html', menu=getMenu(), title='Добавление задания', manager =user_is_manager)
 
 @app.route('/index')
 @login_required
-
 def index():
     if 'current_user' in session:
         user = {'employee_login': session.get('current_user', 'secret')[4]}
@@ -136,6 +139,8 @@ def index():
 @login_required
 def showTask(id_task):
     db = connection_db("postgres", "74NDF*305c")
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     with db:
         id, desc = getTask(id_task, db)
         if not id:
@@ -147,6 +152,8 @@ def showTask(id_task):
 @login_required
 def showClient(id_client):
     db = connection_db("postgres", "74NDF*305c")
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     with db:
         id, lastn = getClient(id_client, db)
         if not id:
@@ -165,6 +172,9 @@ def logout():
 @app.route('/profile')
 @login_required
 def profile():
+    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     return render_template("profile.html", menu=getMenu(), title="Профиль", manager=user_is_manager)
 
 @app.route('/about')
@@ -176,12 +186,16 @@ def about():
 @app.route('/adminka', methods=["POST", "GET"])
 @login_required
 def adminka():
+    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    user_is_manager = True if position_user == 1 else False
     if request.method == "POST":
-        if len(request.form['username']) > 2:
-            flash('Сообщение отправлено', category='success')
-        else:
-            flash('Критиническая ошибка отправки.', category='error')
-        print(request.form)
+        with db:
+            if len(request.form['username']) > 2:
+                flash('Сообщение отправлено', category='success')
+            else:
+                flash('Критиническая ошибка отправки.', category='error')
+            print(request.form)
     return render_template('adm.html', title='Оставьте свой отзыв, мы его даже не запишем!', menu=getMenu(), manager=user_is_manager)
 
 def close_db(error):
