@@ -7,9 +7,13 @@
 {% endfor %}
 
 <form action="{{ url_for('addTask') }}" method="post" class="form-contact">
-    <p><label>ID региона: </label><input type="text" name="name", value="" required />
-    <p><label>Описание: </label>
-    <p><textarea name="post" rows=7 cols=40></textarea>
+    <p><label>Дата дедлайна: </label><input type="text" name="deadline", value="" required />
+    <p><label>Дата принятия: </label><input type="text" name="accept", value="" required />
+    <p><label>Статус задания: </label><input type="text" name="status", value="" required />
+    <p><label>Номер контракта: </label><input type="text" name="contract", value="" required />
+    <p><label>Номер исполнителя: </label><input type="text" name="executor", value="" required />
+    <p><label>Номер клиента: </label><input type="text" name="client", value="" required />
+    <p><label>Код приоритета: </label><input type="text" name="priority", value="" required />
     <p><input type="submit" value="Добавить" />
 
 </form>

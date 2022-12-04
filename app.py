@@ -1,5 +1,4 @@
 from flask import Flask, render_template, url_for, request, flash, session, redirect, abort, g
-from config import host, user, password, db_name
 from FDataBase import *
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from UserLogin import UserLogin
@@ -107,19 +106,29 @@ def clients():
 @app.route('/edit-tasks', methods=["POST", "GET"])
 @login_required
 def addTask():
-    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
-    user_is_manager = True if position_user == 1 else False
+    if 'current_user' in session:
+        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+        user = {'employee_login': session.get('current_user', 'secret')[4]}
+        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        user_is_manager = True if position_user == 1 else False
     if request.method == "POST":
         with db:
-            if len(request.form['name']) > 0 and len(request.form['post']) > 0:
-                res = addtask(request.form['name'], request.form['post'], db)
-                if not res:
-                    flash('Ошибка добавления региона', category='error')
+                deadline_date = request.form.get('deadline')
+                status = request.form.get('status')
+                contract = request.form.get('contract')
+                executor = request.form.get('executor')
+                client = request.form.get('client')
+                priority = request.form.get('priority')
+                author = session.get('current_user', 'secret')[0]
+                if not (deadline_date  or status or contract or executor or client or priority):
+                    flash("Заполните все поля", "error")
                 else:
-                    flash('Регион успешно добавлен', category='succes')
-            else:
-                flash('Ошибка добавления региона', category='error')
+                    res = addtask(deadline_date, status,contract,author,executor,client,priority, db)
+                    if not res:
+                        flash('Ошибка добавления задания', category='error')
+                    else:
+                        flash('Задание успешно добавлено', category='succes')
+                return redirect(url_for('index'))
     return render_template('add_task.html', menu=getMenu(), title='Добавление задания', manager =user_is_manager)
 
 @app.route('/index')

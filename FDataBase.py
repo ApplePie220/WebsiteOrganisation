@@ -37,10 +37,12 @@ def getClientAnounce(db):
 
     return []
 
-def addtask(id, text, db):
+def addtask(deadldate, status,contrid,author,executor,client,priority, db):
     try:
             with db.cursor() as cursor:
-                cursor.execute("INSERT INTO region(region_id, region_description) VALUES(%s, %s)", (id, text))
+                cursor.execute(f'''INSERT INTO task (deadline_date, acception_date, task_status, contract_number,author_number,executor_number, client_number, task_priority) 
+                VALUES ('{deadldate}',null,false,'{contrid}','{author}','{executor}',
+					    '{client}','{priority}') ''')
                 db.commit()
     except Exception as e:
         print("Ошибкад добавления задачи " + e)
