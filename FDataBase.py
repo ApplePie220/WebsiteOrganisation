@@ -139,3 +139,19 @@ def getPassUserByLogin(login,pasw, db):
         print("Ошибка получения пользователя из бд.")
 
     return False
+
+def getPositionUser(user_id, db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute("SELECT position_id FROM employee WHERE employee_number = %(employee_number)s",
+                           {'employee_number': user_id})
+            res = cursor.fetchone()[0]
+            if not res:
+                print("Пользователя с таким id нет.")
+                return False
+            return res
+
+    except:
+        print("Ошибка получения юзера из бд.")
+
+    return False

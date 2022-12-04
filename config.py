@@ -1,4 +1,4 @@
 host = "localhost"
 user = "postgres"
-password = "frerard2203"
+password = "74NDF*305c"
 db_name = "organisdb"

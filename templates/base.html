@@ -21,7 +21,11 @@
         {% if current_user.is_authenticated %}
         <li> <a href="{{ url_for('index') }}">Список заданий</a> </li>
         <li> <a href="{{ url_for('clients') }}">Список клиентов</a> </li>
+            {% endif %}
+        {% if current_user.is_authenticated and manager%}
         <li> <a href="{{ url_for('addTask') }}">Добавить задание</a> </li>
+            {% endif %}
+        {% if current_user.is_authenticated %}
         <li> <a href="{{ url_for('adminka') }}">Отзыв</a> </li>
         <li> <a href="{{ url_for('profile') }}">Профиль</a> </li>
         {% endif %}
