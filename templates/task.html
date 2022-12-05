@@ -12,7 +12,9 @@
             <p><label>Дедлайн: </label><input type="text" name="deadline", value="{{ task[3] }}" required />
             <p><label>Дата принятия: </label><input type="text" name="accept", value="{{ task[4] }}" required />
             <p><label>Статус: </label><input type="text" name="status", value="{{ task[5] }}" required />
+            {% if current_user.is_authenticated and manager%}
             <p><label>Номер исполнителя: </label></p><input type="text" name="executor", value="{{ task[8] }}" required />
+            {% endif %}
             <p><label>Номер приоритета: </label></p><input type="text" name="priority", value="{{ task[10] }}" required />
             <p><input type="submit" value="Изменить задание." />
         </form>

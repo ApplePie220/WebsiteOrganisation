@@ -1,6 +1,9 @@
 {% extends 'base.html' %}
     {% block content %}
         {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
         <hr>
         <h2>Список доступных заданий</h2>
         <ul class="list-posts">
