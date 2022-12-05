@@ -69,8 +69,8 @@ def updateTask(status, executor,  priority,deadline,acception, db, task_id):
             cursor.execute(f'''UPDATE task SET task_status = '{status}',
                                     executor_number = '{executor}',
                                     task_priority = '{priority}',
-                                    deadline_date = {deadline},
-                                    acception_date = {acception}, 
+                                    deadline_date = '{deadline}',
+                                    acception_date = '{acception}'
                                     WHERE task_number = '{task_id}' ''')
 
     except Exception as e:

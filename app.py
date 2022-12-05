@@ -143,9 +143,9 @@ def index():
             print("главная")
     return render_template('index.html', menu=getMenu(), posts=posts, manager=user_is_manager)
 
-@app.route('/edit-task/<int:id_task>', methods=['GET', 'POST'])
+@app.route('/task/<int:id_task>', methods=['GET', 'POST'])
 @login_required
-def editTask(id_task):
+def showTask(id_task):
     task = None
     user = None
     if 'current_user' in session:
@@ -158,31 +158,35 @@ def editTask(id_task):
                 status = request.form.get('status')
                 executor = request.form.get('executor')
                 priority = request.form.get('priority')
-                deadline_date = 'null' if  request.form.get('deadline') == 'None' else \
+                deadline_date = 'null' if request.form.get('deadline') == 'None' else \
                     request.form.get('deadline')
-                acception_date = 'null' if  request.form.get('accept') == 'None' else \
+                acception_date = 'null' if request.form.get('accept') == 'None' else \
                     request.form.get('accept')
                 if not(status or executor or priority or deadline_date or acception_date):
                     flash("Заполните все поля", "error")
                 else:
-                    updateTask(status, executor,priority,deadline_date,acception_date, id_task)
+                    updateTask(status, executor,priority,deadline_date,acception_date,db, id_task)
+                    flash("Задание успешно изменено", "success")
+                    return redirect(url_for('index'))
         else:
             with db:
                 task = getTask(id_task, db)
-                return redirect(url_for('showTask', id_task=id_task))
-    return render_template('edit-task.html',menu=getMenu(), task=task, manager =user_is_manager )
+                # return redirect(url_for('showTask', id_task=id_task))
+    return render_template('task.html',menu=getMenu(), task=task, manager =user_is_manager )
 
 
-@app.route('/task/<int:id_task>')
-def showTask(id_task):
-    task = None
-    user = None
-    if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-        with db:
-            task = getTask(id_task,db)
-    return render_template('task.html',menu=getMenu(), manager=user_is_manager, task=task)
+# @app.route('/task/<int:id_task>')
+# def showTask(id_task):
+#     task = None
+#     user = None
+#     if 'current_user' in session:
+#         user = {'employee_login': session.get('current_user', 'secret')[4]}
+#         db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+#         position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+#         user_is_manager = True if position_user == 1 else False
+#         with db:
+#             task = getTask(id_task,db)
+#     return render_template('task.html',menu=getMenu(), manager=user_is_manager, task=task)
 
 
 @app.route('/client/<int:id_client>')
