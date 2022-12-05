@@ -180,7 +180,7 @@ def showTask(id_task):
                 task = getTask(id_task, db)
                 # return redirect(url_for('showTask', id_task=id_task))
     return render_template('task.html', menu=getMenu(), task=task, manager=user_is_manager,
-                           title="Задание")
+                           title="Редактор задания")
 
 
 
