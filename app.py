@@ -182,7 +182,7 @@ def showTask(id_task):
         db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
         with db:
             task = getTask(id_task,db)
-    return render_template('task.html',menu=getMenu(), manager=user_is_manager,task=task)
+    return render_template('task.html',menu=getMenu(), manager=user_is_manager)
 
 
 @app.route('/client/<int:id_client>')

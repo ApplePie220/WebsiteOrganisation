@@ -17,7 +17,7 @@
             <p>Номер приоритета: {{ task[10] }}</p><input type="text" name="priority", value="" required />
         </div>
         <div class="button">
-            <div><a href="{{ url_for('change_task', task_id=task[0]) }}">Изменить задачу</a></div>
+            <div><a href="{{ url_for('editTask', task_id=task[0]) }}">Изменить задачу</a></div>
         </div>
     </div>
 {% endblock %}
