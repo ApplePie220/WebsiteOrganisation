@@ -2,13 +2,12 @@
     {% block content %}
         {{ super() }}
         <hr>
-        <h2>Список клиентов</h2>
-        <h3> <div class="search">
+        <h2>
         <form action="" method="POST">
             <input type="text" placeholder="Введите id клиента" name="search" id="">
             <button><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form>
-    </div></h3>
+        </form></h2>
+
         <ul class="list-posts">
             {% for p in posts %}
         <li>
