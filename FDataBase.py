@@ -19,7 +19,8 @@ def getTaskAnounce(db):
                 res = cursor.fetchall()
                 if res:
                     return res
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка в получении заданий.")
 
     return []
@@ -32,7 +33,8 @@ def getClientAnounce(db):
                 cursor.execute("SELECT * FROM client ORDER BY client_number")
                 res = cursor.fetchall()
                 if res: return res
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка в получении клиентов.")
 
     return []
@@ -56,10 +58,24 @@ def getTask(id, db):
             res = cursor.fetchone()
             if res:
                 return res
-    except:
-        print("Ошибка чтения из БД")
+    except Exception as e:
+        print(e)
+        print("Ошибка получения таска из БД")
     return (False, False)
 
+def updateTask(status, executor,  priority,deadline,acception, db, task_id):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(f'''UPDATE task SET task_status = '{status}',
+                                    executor_number = '{executor}',
+                                    task_priority = '{priority}',
+                                    deadline_date = {deadline},
+                                    acception_date = {acception}, 
+                                    WHERE task_number = '{task_id}' ''')
+
+    except Exception as e:
+        print(e)
+        print("Ошибка получения таска из БД")
 def getClient(id, db):
     try:
         with db.cursor() as cursor:
@@ -68,7 +84,8 @@ def getClient(id, db):
             res = cursor.fetchone()
             if res:
                 return res
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка чтения из БД")
     return (False, False)
 
@@ -82,7 +99,8 @@ def addUser(name, login,password,phone,email,role, db ):
             with db.cursor() as cursor:
                 cursor.execute("CALL create_user(%s,%s,%s,%s,%s,%s)", (name,email,phone,login,password,id_role))
                 db.commit()
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка добавления пользователя в бд")
         return False
 
@@ -94,13 +112,13 @@ def getUser(user_id, db):
             with db.cursor(cursor_factory=DictCursor) as cursor:
                 cursor.execute("SELECT * FROM employee WHERE employee_number = %(employee_number)s",
                                {'employee_number': user_id})
-
                 res = cursor.fetchone()
                 if not res:
                     print("Пользовтель не найден.")
                     return False
                 return res
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка получения данных из бд.")
     return False
 
@@ -135,7 +153,8 @@ def getPassUserByLogin(login,pasw, db):
                     return False
                 return res
 
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка получения пользователя из бд.")
 
     return False
@@ -151,7 +170,8 @@ def getPositionUser(user_id, db):
                 return False
             return res
 
-    except:
+    except Exception as e:
+        print(e)
         print("Ошибка получения юзера из бд.")
 
     return False

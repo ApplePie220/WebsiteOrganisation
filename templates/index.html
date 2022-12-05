@@ -6,7 +6,7 @@
         <ul class="list-posts">
             {% for p in posts %}
         <li>
-            <p class="title"><label>Id задания: </label> {{ p.task_number }}</p>
+            <p class="title"><label>Id задания: </label> <a href="{{ url_for('showTask', id_task=p.task_number) }}">{{ p.task_number }}</a></p>
             <p class="annonce"><label>Дата создания: </label>{{ p.creation_date }}</p>
             <p class="annonce"><label>Дата завершения: </label>{{ p.finish_date }}</p>
             <p class="annonce"><label>Дедлайн: </label>{{ p.deadline_date}}</p>
