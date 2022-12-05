@@ -1,18 +1,16 @@
-html, body {
-    font-family: 'Arial';
-    margin: 0;
-    padding: 0;
-    height: 100%;
-    width: 100%;
+body {
+    font: 100% Roboto, sans-serif;
+    color: #38015d;
 
 }
+
 a {
-    color: #0059b2;
+    color: #9331d9;
     text-decoration: none;
 }
 
 a:hover {
-    color: #CC0000;
+    color: #25013b;
     text-decoration: underline;
 }
 
@@ -22,11 +20,11 @@ a:hover {
 
 ul.mainmenu {
     list-style: none;
-    background: #3F4137;
+    background: #f3b7f6;
     height: 60px;
     margin: 0;
     padding: 0;
-    color: #fdc073;
+    color: #38015d;
     font-size: 20px;
     overflow: hidden;
 
@@ -40,12 +38,12 @@ ul.mainmenu li {
 ul.mainmenu li.last {float: right}
 
 ul.mainmenu li a{
-    color: #fdc073;
+    color: #38015d;
     text-decoration: none;
 }
 
 ul.mainmenu li a:hover{
-    color: #FDA83D;
+    color: #760079;
 }
 
 div.content {
@@ -67,13 +65,13 @@ div.content {
 }
 
 .flash.success{
-    border: 1px solid #21DB56;
-    background: #AEFFC5;
+    border: 1px solid #04b77b;
+    background: #6cf3c9;
 }
 
 .flash.error {
-    border: 1px solid #FF4343;
-    background: #FF9C9C;
+    border: 1px solid #830632;
+    background: #fa6497;
 }
 
 ul.list-posts {
@@ -85,13 +83,13 @@ ul.list-posts {
 
 ul.list-posts li {
     margin: 20px 0 0 0;
-    border: 1px solid #eee;
+    border: 1px solid #f3b7f6;
 }
 
 ul.list-posts .title {
     margin: 0;
     padding: 5px;
-    background: #eee;
+    background: #f3b7f6;
 }
 
 ul.list-posts .annonce {
@@ -108,13 +106,13 @@ ul.list-clients {
 
 ul.list-clients li {
     margin: 20px 0 0 0;
-    border: 1px solid #eee;
+    border: 1px solid #f3b7f6;
 }
 
 ul.list-clients .identic {
     margin: 0;
     padding: 5px;
-    background: #eee;
+    background: #f3b7f6;
 }
 ul.list-clients .lastname {
     margin: 0;
@@ -139,7 +137,7 @@ ul.profile-info{
     list-style: none;
     margin: 10px 0 0 0;
     padding: 0;
-    color: #7E8A24;
+    color: #760079;
 }
 
 ul.profile-info li {margin-top: 10px;}

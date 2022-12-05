@@ -37,13 +37,11 @@ def getClientAnounce(db):
 
     return []
 
-def addtask(deadldate, status,contrid,author,executor,client,priority, db):
+def addtask(status,contract,author,executor,client,priority, db):
     try:
             with db.cursor() as cursor:
-                cursor.execute(f'''INSERT INTO task (deadline_date, acception_date, task_status, contract_number,author_number,executor_number, client_number, task_priority) 
-                VALUES ('{deadldate}',null,false,'{contrid}','{author}','{executor}',
-					    '{client}','{priority}') ''')
-                db.commit()
+                cursor.execute("CALL add_task(%s,%s,%s,%s,%s,%s)", (status,contract,author,client,executor,priority))
+                #db.commit()
     except Exception as e:
         print("Ошибкад добавления задачи " + e)
         return False

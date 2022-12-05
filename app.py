@@ -50,7 +50,7 @@ def login():
         user_login = request.form.get('username')
         enter_pass = request.form.get('psw')
         if user_login and enter_pass:
-            db = connection_db(user_log="postgres", user_pass="74NDF*305c")
+            db = connection_db(user_log="postgres", user_pass="frerard2203")
             with db:
                 user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
                 if user_password_correct:
@@ -77,7 +77,7 @@ def login():
 @app.route('/register', methods=["POST", "GET"])
 def register():
     if request.method == "POST":
-        db = connection_db("postgres", "74NDF*305c")
+        db = connection_db("postgres", "frerard2203")
         with db:
             if len(request.form['name']) > 0 and len(request.form['username']) > 0 \
                 and len(request.form['psw']) > 3 and request.form['psw'] == request.form['psw2']:
@@ -96,7 +96,7 @@ def register():
 @app.route('/clients')
 @login_required
 def clients():
-    db = connection_db("postgres", "74NDF*305c")
+    db = connection_db("postgres", "frerard2203")
     position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
     user_is_manager = True if position_user == 1 else False
     with db:
@@ -113,17 +113,16 @@ def addTask():
         user_is_manager = True if position_user == 1 else False
     if request.method == "POST":
         with db:
-                deadline_date = request.form.get('deadline')
                 status = request.form.get('status')
                 contract = request.form.get('contract')
                 executor = request.form.get('executor')
                 client = request.form.get('client')
                 priority = request.form.get('priority')
                 author = session.get('current_user', 'secret')[0]
-                if not (deadline_date  or status or contract or executor or client or priority):
+                if not (status or contract or executor or client or priority or author):
                     flash("Заполните все поля", "error")
                 else:
-                    res = addtask(deadline_date, status,contract,author,executor,client,priority, db)
+                    res = addtask(status,contract,author,executor,client,priority, db)
                     if not res:
                         flash('Ошибка добавления задания', category='error')
                     else:
@@ -147,7 +146,7 @@ def index():
 @app.route('/task/<int:id_task>')
 @login_required
 def showTask(id_task):
-    db = connection_db("postgres", "74NDF*305c")
+    db = connection_db("postgres", "frerard2203")
     position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
     user_is_manager = True if position_user == 1 else False
     with db:
@@ -160,7 +159,7 @@ def showTask(id_task):
 @app.route('/client/<int:id_client>')
 @login_required
 def showClient(id_client):
-    db = connection_db("postgres", "74NDF*305c")
+    db = connection_db("postgres", "frerard2203")
     position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
     user_is_manager = True if position_user == 1 else False
     with db:
