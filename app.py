@@ -143,7 +143,7 @@ def index():
             print("главная")
     return render_template('index.html', menu=getMenu(), posts=posts, manager=user_is_manager)
 
-@app.route('/task/<int:id_task>', methods=['GET', 'POST'])
+@app.route('/edit-task/<int:id_task>', methods=['GET', 'POST'])
 @login_required
 def editTask(id_task):
     task = None
@@ -182,7 +182,7 @@ def showTask(id_task):
         db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
         with db:
             task = getTask(id_task,db)
-    return render_template('task.html',menu=getMenu(), manager=user_is_manager)
+    return render_template('task.html',menu=getMenu(), manager=user_is_manager, task=task)
 
 
 @app.route('/client/<int:id_client>')
