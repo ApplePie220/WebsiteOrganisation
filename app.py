@@ -97,12 +97,13 @@ def register():
 @app.route('/clients')
 @login_required
 def clients():
-    db = connection_db("postgres", "74NDF*305c")
-    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
-    user_is_manager = True if position_user == 1 else False
-    with db:
-        print("получаем клиентов")
-    return render_template('clients_list.html', menu=getMenu(), posts=getClientAnounce(db), manager=user_is_manager)
+    if 'current_user':
+        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+        user = {'employee_login': session.get('current_user', 'secret')[4]}
+        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        user_is_manager = True if position_user == 1 else False
+    return render_template('clients_list.html', menu=getMenu(), posts=getClientAnounce(db),
+                           manager=user_is_manager, title="Список клиентов")
 
 
 @app.route('/add-tasks', methods=["POST", "GET"])
@@ -144,7 +145,8 @@ def index():
         user_is_manager = True if position_user == 1 else False
         with db:
             print("главная")
-    return render_template('index.html', menu=getMenu(), posts=posts, manager=user_is_manager)
+    return render_template('index.html', menu=getMenu(), posts=posts,
+                           manager=user_is_manager,title="Список заданий")
 
 
 @app.route('/task/<int:id_task>', methods=['GET', 'POST'])
@@ -177,21 +179,9 @@ def showTask(id_task):
             with db:
                 task = getTask(id_task, db)
                 # return redirect(url_for('showTask', id_task=id_task))
-    return render_template('task.html', menu=getMenu(), task=task, manager=user_is_manager)
+    return render_template('task.html', menu=getMenu(), task=task, manager=user_is_manager,
+                           title="Задание")
 
-
-@app.route('/client/<int:id_client>')
-@login_required
-def showClient(id_client):
-    db = connection_db("postgres", "74NDF*305c")
-    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
-    user_is_manager = True if position_user == 1 else False
-    with db:
-        id, lastn = getClient(id_client, db)
-        if not id:
-            abort(404)
-
-    return render_template('client.html', menu=getMenu(), title=id, post=lastn, manager=user_is_manager)
 
 
 @app.route('/logout')

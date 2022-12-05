@@ -6,7 +6,7 @@
         <ul class="list-posts">
             {% for p in posts %}
         <li>
-            <p class="title"> <a href="{{ url_for('showClient', id_client=p.client_number) }}">{{ client_number }}</a></p>
+            <p class="title"></p>
             <p class="annonce"><label>Имя клиента: </label>{{ p.client_name }}</p>
             <p class="annonce"><label>Номер телефона: </label>{{ p.client_phone }}</p>
             <p class="annonce"><label>Эл. почта: </label>{{ p.client_email}}</p>
