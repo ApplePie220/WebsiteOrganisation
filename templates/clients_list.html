@@ -2,11 +2,11 @@
     {% block content %}
         {{ super() }}
         <hr>
-        <h2>
-        <form action="" method="POST">
-            <input type="text" placeholder="Введите id клиента" name="search" id="">
-            <button><i class="fa-solid fa-magnifying-glass"></i></button>
-        </form></h2>
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <div class="search">
+            <input type="search">
+            <i class="fas fa-search"></i>
+        </div></h2>
 
         <ul class="list-posts">
             {% for p in posts %}

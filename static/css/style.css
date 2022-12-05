@@ -141,3 +141,28 @@ ul.profile-info{
 }
 
 ul.profile-info li {margin-top: 10px;}
+
+.search{
+  border: 1px solid #ccc;
+  display: inline-block;
+  border-radius: 3px;
+  font-size: 20px;
+}
+[type='search']{
+  border: none;
+  outline: none;
+}
+.fas.fa-search{
+  color: #ccc;
+}
+
+input[type=text]::-ms-clear {
+    display: none; width : 0; height: 0;
+}
+input[type=text]::-ms-reveal {
+    display: none; width : 0; height: 0;
+}
+input[type="search"]::-webkit-search-decoration,
+input[type="search"]::-webkit-search-cancel-button,
+input[type="search"]::-webkit-search-results-button,
+input[type="search"]::-webkit-search-results-decoration { display: none; }
