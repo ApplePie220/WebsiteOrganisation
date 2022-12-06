@@ -219,6 +219,27 @@ def generateReport():
                 return redirect(url_for('index'))
 
     return render_template('report.html', manager=user_is_manager, title="Генерация отчета по заданиям.")
+@app.route('/task-report', methods=['POST', 'GET'])
+def generate_task_report():
+    if 'current_user' in session:
+        user = {'employee_login': session.get('current_user', 'secret')[4]}
+        db = connection_db('postgres','74NDF*305c')
+        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        user_is_manager = True if position_user['position_id'] == 1 else False
+    if request.method == "POST":
+        with db:
+            id =request.form.get('id')
+            start_date= request.form.get('start')
+            finish_date = request.form.get('finish')
+            path = request.form.get('path')
+            if not (path or id or start_date or finish_date):
+                flash("Заполните все поля!", "error")
+            else:
+                get_report_task(path, start_date, finish_date,id, db)
+                flash("Отчет успешно сформирован по указанному пути.", "success")
+                return redirect(url_for('index'))
+
+    return render_template('worker_report.html', manager=user_is_manager, title="Генерация отчета по сотруднику.")
 
 
 if __name__ == '__main__':

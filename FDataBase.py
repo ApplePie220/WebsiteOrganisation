@@ -193,3 +193,15 @@ def getReport(path, db):
         return False
 
     return True
+
+def get_report_task(path, start, finish, id, db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(f'''CALL export_data_employee_csv('{id}','{start}','{finish}','{path}')''')
+
+    except Exception as e:
+        print(e)
+        print("Ошибка вызова функции генерации отчета по сотруднику.")
+        return False
+
+    return True
