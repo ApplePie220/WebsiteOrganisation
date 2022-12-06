@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+{% block content %}
+{{ super() }}
+{% for cat, msg in get_flashed_messages(True) %}
+    <div class="flash {{ cat }}">{{ msg }}</div>
+{% endfor %}
+
+<form action="" method="post" class="form-contact">
+    <p><label>Путь сохранения: </label><input type="text" placeholder="Введите путь" name="path", value="" required />
+    <p><input type="submit" value="Добавить" />
+
+</form>
+{% endblock %}

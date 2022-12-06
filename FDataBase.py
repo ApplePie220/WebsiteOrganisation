@@ -1,17 +1,5 @@
-import math
-import time
 import psycopg2
-from flask import session
 from psycopg2.extras import DictCursor
-
-
-def getMenu():
-    menu = [{"name": "Список заданий", "url": "allowed-information"},
-            {"name": "Редактор заданий", "url": "edit-tasks"},
-            {"name": "Отзыв", "url": "adminka"},
-            {"name": "Список клиентов", "url": "clients-list"},
-            {"name": "Авторизация", "url": "login"}]
-    return menu
 
 
 def getTaskAnounce(db):
@@ -43,10 +31,11 @@ def getClientAnounce(db):
     return []
 
 
-def addtask(status, contract, author, executor, client, priority, db):
+def addtask(description,status, contract, author, executor, client, priority, db):
     try:
         with db.cursor() as cursor:
-            cursor.execute("CALL add_task(%s,%s,%s,%s,%s,%s)", (status, contract, author, client, executor, priority))
+            cursor.execute("CALL add_task(%s,%s,%s,%s,%s,%s,%s)",
+                           (description,status, contract, author, client, executor, priority))
             # db.commit()
     except Exception as e:
         print("Ошибкад добавления задачи " + e)
@@ -74,13 +63,15 @@ def updateTask(status, executor, priority, deadline, acception, db, task_id, is_
     try:
         with db.cursor() as cursor:
             if is_manager:
-                cursor.execute(f'''UPDATE task SET task_status = '{status}',executor_number = '{executor}',
-                                        task_priority = '{priority}',deadline_date = '{deadline}',
-                                        acception_date = '{acception}' WHERE task_number = '{task_id}' ''')
+                cursor.execute(f'''UPDATE task SET task_status = '{status}',
+                                executor_number = '{executor}',task_priority = '{priority}',
+                                deadline_date = '{deadline}',acception_date = '{acception}' 
+                                WHERE task_number = '{task_id}' ''')
             else:
-                cursor.execute(f'''UPDATE task SET task_status = '{status}',task_priority = '{priority}',
-                                                        deadline_date = '{deadline}',acception_date = '{acception}'
-                                                        WHERE task_number = '{task_id}' ''')
+                cursor.execute(f'''UPDATE task SET task_status = '{status}',
+                                    task_priority = '{priority}',deadline_date = '{deadline}',
+                                    acception_date = '{acception}'
+                                    WHERE task_number = '{task_id}' ''')
 
     except Exception as e:
         print(e)
@@ -176,10 +167,10 @@ def getPassUserByLogin(login, pasw, db):
 
 def getPositionUser(user_id, db):
     try:
-        with db.cursor() as cursor:
+        with db.cursor(cursor_factory=DictCursor) as cursor:
             cursor.execute("SELECT position_id FROM employee WHERE employee_number = %(employee_number)s",
                            {'employee_number': user_id})
-            res = cursor.fetchone()[0]
+            res = cursor.fetchone()
             if not res:
                 print("Пользователя с таким id нет.")
                 return False
@@ -190,3 +181,15 @@ def getPositionUser(user_id, db):
         print("Ошибка получения юзера из бд.")
 
     return False
+
+def getReport(path, db):
+    try:
+        with db.cursor() as cursor:
+            cursor.execute(f'''CALL export_report_json('{path}')''')
+
+    except Exception as e:
+        print(e)
+        print("Ошибка вызова функции генерации отчета.")
+        return False
+
+    return True
