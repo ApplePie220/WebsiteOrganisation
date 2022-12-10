@@ -30,6 +30,19 @@ def getClientAnounce(db):
 
     return []
 
+def findClientById(client_id,db):
+    try:
+        with db.cursor() as cursor:
+
+            cursor.execute(f'SELECT * FROM client WHERE client_number={client_id}')
+            res = cursor.fetchone()
+            if res:
+                return res
+    except Exception as e:
+        print(e)
+        print("Ошибка получения клиента по его id.")
+
+    return False
 
 def addtask(description,status, contract, author, executor, client, priority, db):
     try:
@@ -76,20 +89,6 @@ def updateTask(status, executor, priority, deadline, acception, db, task_id, is_
     except Exception as e:
         print(e)
         print("Ошибка получения таска из БД")
-
-
-def getClient(id, db):
-    try:
-        with db.cursor() as cursor:
-            cursor.execute("SELECT employee_id,last_mame FROM employees WHERE employee_id =%(employee_id)s",
-                           {'employee_id': id})
-            res = cursor.fetchone()
-            if res:
-                return res
-    except Exception as e:
-        print(e)
-        print("Ошибка чтения из БД")
-    return (False, False)
 
 
 def addUser(name, login, password, phone, email, role, db):

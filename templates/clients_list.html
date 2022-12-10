@@ -1,15 +1,20 @@
 {% extends 'base.html' %}
     {% block content %}
         {{ super() }}
+        {% for cat, msg in get_flashed_messages(True) %}
+        <div  class="flash {{ cat }}">{{ msg }}</div>
+        {% endfor %}
         <hr>
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.9.0/css/all.min.css">
+        <form action="" method="POST">
         <div class="search">
-            <input type="search" placeholder="Введите номер клиента">
-            <i class="fas fa-search"></i>
-        </div></h2>
+            <input type="search" placeholder="Введите номер клиента" name="id">
+        </div>
+            <button><i class="fas fa-search"></i></button>
+        </form>
 
         <ul class="list-posts">
-            {% for p in posts %}
+        {% for p in posts %}
         <li>
             <p class="title"></p>
             <p class="annonce"><label>Номер клиента: </label>{{ p.client_number }}</p>

@@ -94,7 +94,7 @@ def register():
     return render_template('register.html', title="Регистрация")
 
 
-@app.route('/clients')
+@app.route('/clients', methods=["POST","GET"])
 @login_required
 def clients():
     if 'current_user':
@@ -102,9 +102,34 @@ def clients():
         user = {'employee_login': session.get('current_user', 'secret')[4]}
         position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
-    return render_template('clients_list.html', posts=getClientAnounce(db),
-                           manager=user_is_manager, title="Список клиентов")
 
+        if request.method == "POST":
+            with db:
+                client_id = request.form.get('id')
+                if not client_id:
+                    flash("Введите id клиента для поиска.", "error")
+                else:
+                   return redirect(url_for('showClient',id_client=client_id))
+        clients_list = getClientAnounce(db)
+    return render_template('clients_list.html', posts=clients_list,
+                           manager=user_is_manager, title="Список клиентов")
+@app.route('/client/<int:id_client>')
+def showClient(id_client):
+    client = None
+    user = None
+    if 'current_user' in session:
+        user = {'employee_login': session.get('current_user', 'secret')[4]}
+        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        user_is_manager = True if position_user['position_id'] == 1 else False
+        with db:
+            client = findClientById(id_client, db)
+            if not client:
+                flash("Клиент с таким id не найден или не существует.","error")
+                return redirect(url_for('clients'))
+
+    return render_template('client.html', client=client, manager=user_is_manager,
+                           title="Информация о клиенте")
 
 @app.route('/add-tasks', methods=["POST", "GET"])
 @login_required
