@@ -53,7 +53,7 @@ def login():
         user_login = request.form.get('username')
         enter_pass = request.form.get('psw')
         if user_login and enter_pass:
-            db = connection_db(user_log="postgres", user_pass="74NDF*305c")
+            db = connection_db(user_log="postgres", user_pass="frerard2203")
             with db:
                 user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
                 if user_password_correct:
@@ -76,7 +76,7 @@ def login():
 @app.route('/register', methods=["POST", "GET"])
 def register():
     if request.method == "POST":
-        db = connection_db("postgres", "74NDF*305c")
+        db = connection_db("postgres", "frerard2203")
         with db:
             if len(request.form['name']) > 0 and len(request.form['username']) > 0 \
                     and len(request.form['psw']) > 3 and request.form['psw'] == request.form['psw2']:
@@ -194,10 +194,11 @@ def showTask(id_task):
                     request.form.get('deadline')
                 acception_date = 'null' if request.form.get('accept') == 'None' else \
                     request.form.get('accept')
+                description = request.form.get('description')
                 if not (status or executor or priority or deadline_date or acception_date):
                     flash("Заполните все поля", "error")
                 else:
-                    updateTask(status, executor, priority, deadline_date, acception_date, db,
+                    updateTask(status, executor, priority,description, deadline_date, acception_date, db,
                                id_task, user_is_manager)
                     flash("Задание успешно изменено", "success")
                     return redirect(url_for('index'))
@@ -230,7 +231,7 @@ def profile():
 def generateReport():
     if 'current_user' in session:
         user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db('postgres','74NDF*305c')
+        db = connection_db('postgres','frerard2203')
         position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
@@ -248,7 +249,7 @@ def generateReport():
 def generate_task_report():
     if 'current_user' in session:
         user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db('postgres','74NDF*305c')
+        db = connection_db('postgres','frerard2203')
         position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":

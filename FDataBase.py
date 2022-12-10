@@ -72,18 +72,18 @@ def getTask(id, db):
 
 
 #  для менеджера и обычного сотрудника функции изменения задания разные.
-def updateTask(status, executor, priority, deadline, acception, db, task_id, is_manager):
+def updateTask(status, executor, priority,description, deadline, acception, db, task_id, is_manager):
     try:
         with db.cursor() as cursor:
             if is_manager:
-                cursor.execute(f'''UPDATE task SET task_status = '{status}',
-                                executor_number = '{executor}',task_priority = '{priority}',
-                                deadline_date = '{deadline}',acception_date = '{acception}' 
-                                WHERE task_number = '{task_id}' ''')
+                cursor.execute(f'''UPDATE task SET task_description = '{description}',
+                                task_status = '{status}',executor_number = '{executor}',
+                                task_priority = '{priority}',deadline_date = '{deadline}',
+                                acception_date = '{acception}' WHERE task_number = '{task_id}' ''')
             else:
-                cursor.execute(f'''UPDATE task SET task_status = '{status}',
-                                    task_priority = '{priority}',deadline_date = '{deadline}',
-                                    acception_date = '{acception}'
+                cursor.execute(f'''UPDATE task SET task_description = '{description}',
+                                    task_status = '{status}',task_priority = '{priority}',
+                                    deadline_date = '{deadline}',acception_date = '{acception}'
                                     WHERE task_number = '{task_id}' ''')
 
     except Exception as e:
