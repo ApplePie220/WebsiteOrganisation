@@ -11,7 +11,7 @@ h1{
     border-bottom: 1px solid #44001a;
     text-align: center;
 }
-#reg_form {
+#log_form {
     width: 350px;
     margin: 50px auto 0 auto;
     padding: 10px;
@@ -19,42 +19,39 @@ h1{
     box-shadow: 5px 5px 10px #494346;
     border-radius: 8px;
 }
-ul.reg_list {
+ul.log_list {
     list-style: none;
     padding: 0;
     margin: 20px 20px 20px 20px;
 }
-ul.reg_list li {
+ul.log_list li {
     margin: 10px 10px 10px 0;
 }
 .reg_title {
     min-width: 100px;
 }
-input.reg_input{
+input.log_input{
     width: 200px;
     border: none;
     background: #fcaae3;
     border-bottom: 1px solid #7a0132;
     font-size: 16px;
 }
-.reg_button{
+.log_button{
     font-size: 16px;
     border-radius: 4px;
-    border: 3px solid #ad0541;
+    border: 3px solid #520320;
     background: #830632;
     color: white;
     margin: 10px 0 10px 10px;
-    padding: 1% 33%;
+    padding: 1% 40%;
 }
-select.reg_select{
-    background: #ffd3f1;
-    font-size: 16px;
-    border-radius: 4px;
-    border: 1px solid #ad0541;
-    margin: 0 0 0 8px;
-}
-select.reg_title{
-    display: inline-block;
+
+p{
+    margin: 20px 20px 20px 20px;
+    padding-top: 10px;
+    border-top: 1px solid #520320;
+    text-align: center;
 }
 .flash {
     padding: 10px;
