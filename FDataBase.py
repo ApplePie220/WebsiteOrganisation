@@ -2,6 +2,7 @@ import psycopg2
 from psycopg2.extras import DictCursor
 
 
+#получение всех доступных заданий из бд
 def getTaskAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -15,7 +16,7 @@ def getTaskAnounce(db):
 
     return []
 
-
+#получение всех клиентов из бд
 def getClientAnounce(db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -30,6 +31,7 @@ def getClientAnounce(db):
 
     return []
 
+#поиск клиента по его id
 def findClientById(client_id,db):
     try:
         with db.cursor() as cursor:
@@ -43,7 +45,7 @@ def findClientById(client_id,db):
         print("Ошибка получения клиента по его id.")
 
     return False
-
+#добавление нового задания в бд
 def addtask(status, contract, author, executor, description, client, priority, db):
     try:
         with db.cursor() as cursor:
@@ -56,7 +58,7 @@ def addtask(status, contract, author, executor, description, client, priority, d
 
     return True
 
-
+#получить задание по его id из бд
 def getTask(id, db):
     try:
         with db.cursor() as cursor:
@@ -90,7 +92,7 @@ def updateTask(status, executor, priority,description, deadline, acception, db, 
         print(e)
         print("Ошибка получения таска из БД")
 
-
+#добавление нового пользователя в бд
 def addUser(name, login, password, phone, email, role, db):
     try:
         id_role = 0
@@ -108,7 +110,7 @@ def addUser(name, login, password, phone, email, role, db):
 
     return True
 
-
+#получение пользователя из бд по его Id
 def getUser(user_id, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -124,7 +126,7 @@ def getUser(user_id, db):
         print("Ошибка получения данных из бд.")
     return False
 
-
+#получение пользователя из бд по его логину
 def getUserByLogin(login, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -145,7 +147,7 @@ def getUserByLogin(login, db):
 
     return False
 
-
+#получение пароля пользователя по его логину
 def getPassUserByLogin(login, pasw, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -163,7 +165,7 @@ def getPassUserByLogin(login, pasw, db):
 
     return False
 
-
+#получение номера позиции пользователя
 def getPositionUser(user_id, db):
     try:
         with db.cursor(cursor_factory=DictCursor) as cursor:
@@ -180,7 +182,7 @@ def getPositionUser(user_id, db):
         print("Ошибка получения юзера из бд.")
 
     return False
-
+#создание отчета по заданиям
 def getReport(path, db):
     try:
         with db.cursor() as cursor:
@@ -192,7 +194,7 @@ def getReport(path, db):
         return False
 
     return True
-
+#создание отчета по заданиям для конкретного пользователя
 def get_report_task(path, start, finish, id, db):
     try:
         with db.cursor() as cursor:

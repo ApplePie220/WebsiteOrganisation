@@ -5,16 +5,21 @@
 {% for cat, msg in get_flashed_messages(True) %}
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
-
-<form action="{{ url_for('addTask') }}" method="post" class="form-contact">
-    <p><label>Статус задания: </label><input type="text" name="status" value="" required />
-    <p><label>Номер контракта: </label><input type="text" name="contract" value="" required />
-    <p><label>Номер исполнителя: </label><input type="text" name="executor" value="" required />
-    <p><label>Номер клиента: </label><input type="text" name="client" value="" required />
-    <p><label>Код приоритета: </label><input type="text" name="priority" value="" required />
-    <p><label>Описание: </label>
-    <p><textarea name="description" rows=7 cols=40></textarea>
-    <p><input type="submit" value="Добавить" />
-
-</form>
+<div id="add-task">
+    <form action="{{ url_for('addTask') }}" method="post" class="form-contact">
+        <div class="task_title">Статус задания: </div>
+            <input class="task_input" type="text" name="status" value="" required />
+        <div class="task_title">Номер контракта: </div>
+            <input class="task_input" type="text" name="contract" value="" required />
+        <div class="task_title">Номер исполнителя: </div>
+            <input class="task_input" type="text" name="executor" value="" required />
+        <div class="task_title">Номер клиента: </div>
+            <input class="task_input" type="text" name="client" value="" required />
+        <div class="task_title">Код приоритета: </div>
+            <input class="task_input" type="text" name="priority" value="" required />
+        <div class="task_title">Описание: </div>
+        <p><textarea name="description" rows=7 cols=40></textarea>
+        <p><input class="task-button" type="submit" value="Добавить задание" />
+    </form>
+</div>
 {% endblock %}

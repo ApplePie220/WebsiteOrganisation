@@ -5,16 +5,17 @@ from UserLogin import UserLogin
 import psycopg2
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'secret'
+app.config['SECRET_KEY'] = '47fhd2x' #Секретный ключ для сессии
 
+#Настройка лоигрования юзера и ограничения доступа к страницам
 login_manager = LoginManager(app)
 login_manager.session_protection = "strong"
 login_manager.login_view = 'login'
 login_manager.login_message = "Пожалуйста, авторизуйтесь  для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
-user_is_manager = False
+user_is_manager = False #отображение вкладки с добавл. задания только для менеджера
 
-
+#Подключение к бд
 def connection_db(user_log, user_pass):
     try:
         # подключаемся к бд
@@ -24,6 +25,7 @@ def connection_db(user_log, user_pass):
             password=user_pass,
             database='organisdb'
         )
+        #чтобы все изменения в бд автоматически применялись
         connection.autocommit = True
         print("PostgreSQL connected")
         return connection
@@ -32,18 +34,19 @@ def connection_db(user_log, user_pass):
         print("ERROR while working with PostgreSQL", _ex)
         return False
 
-
+#Подключение к бд через логин и пароль юзера
+#Создание юзера в сессии
 @login_manager.user_loader
 def load_user(user_id):
-    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+    db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
     return UserLogin().from_DB(user_id, db)
 
-
+#отображение страницы с ошибкой
 @app.errorhandler(404)
 def pageNotFound(error):
     return render_template('page404.html', title='Страница не найдена', manager=user_is_manager)
 
-
+#авторизация пользователя
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if current_user.is_authenticated:  # если юзер уже авторизован, то при переходе на авторизацию
@@ -55,10 +58,16 @@ def login():
         if user_login and enter_pass:
             db = connection_db(user_log="postgres", user_pass="frerard2203")
             with db:
+
+                #сравниваем введенный пароль с паролем в бд
                 user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
+
+                #если пароль верный, то создаем сессию этого пользователя
                 if user_password_correct:
                     user = getUserByLogin(user_login, db)
                     userlogin = UserLogin().create(user)
+
+                    #для запоминания пользователя в сессии
                     rm = True if request.form.get('remainme') else False
                     login_user(userlogin, remember=rm)
                     session['current_user'] = user
@@ -73,6 +82,7 @@ def login():
     return render_template("login.html", title="Авторизация")
 
 
+#регистрация пользователя
 @app.route('/register', methods=["POST", "GET"])
 def register():
     if request.method == "POST":
@@ -94,13 +104,13 @@ def register():
     return render_template('register.html', title="Регистрация")
 
 
+#отображение списка клиентов
 @app.route('/clients', methods=["POST","GET"])
 @login_required
 def clients():
     if 'current_user':
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
 
         if request.method == "POST":
@@ -113,14 +123,14 @@ def clients():
         clients_list = getClientAnounce(db)
     return render_template('clients_list.html', clients=clients_list,
                            manager=user_is_manager, title="Список клиентов")
+
+#Отображение клиента, которого вводишь в поиске
 @app.route('/client/<int:id_client>')
 def showClient(id_client):
     client = None
-    user = None
     if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
         with db:
             client = findClientById(id_client, db)
@@ -131,13 +141,13 @@ def showClient(id_client):
     return render_template('client.html', client=client, manager=user_is_manager,
                            title="Информация о клиенте")
 
+#добавление задания
 @app.route('/add-tasks', methods=["POST", "GET"])
 @login_required
 def addTask():
     if 'current_user' in session:
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
         with db:
@@ -147,7 +157,7 @@ def addTask():
             client = request.form.get('client')
             priority = request.form.get('priority')
             description = request.form.get('description')
-            author = session.get('current_user', 'secret')[0]
+            author = session.get('current_user', '47fhd2x')[0]
             if not (status or contract or executor or client or priority or author):
                 flash("Заполните все поля", "error")
             else:
@@ -159,15 +169,14 @@ def addTask():
             return redirect(url_for('index'))
     return render_template('add_task.html', title='Добавление задания', manager=user_is_manager)
 
-
+#отображение всех доступных заданий для пользователя
 @app.route('/index')
 @login_required
 def index():
     if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
+        db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
         tasks = getTaskAnounce(db)
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
         with db:
             print("главная")
@@ -175,15 +184,14 @@ def index():
                            manager=user_is_manager,title="Список заданий")
 
 
+#отображение конкретного задания и его редактирование
 @app.route('/task/<int:id_task>', methods=['GET', 'POST'])
 @login_required
 def showTask(id_task):
     task = None
-    user = None
     if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
-        db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
         if request.method == "POST":
             with db:
@@ -210,7 +218,7 @@ def showTask(id_task):
                            title="Редактор задания")
 
 
-
+#выход из профиля
 @app.route('/logout')
 @login_required
 def logout():
@@ -218,21 +226,21 @@ def logout():
     flash("Вы вышли из аккаунта", "success")
     return redirect(url_for('login'))
 
-
+#профиль пользователя
 @app.route('/profile')
 @login_required
 def profile():
-    db = connection_db(session.get('current_user', 'secret')[4], session.get('user_password', 'secret'))
-    position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+    db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
+    position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
     user_is_manager = True if position_user['position_id'] == 1 else False
     return render_template("profile.html", title="Профиль", manager=user_is_manager)
 
+#генерация отчета по заданиям в формате json
 @app.route('/report', methods=['POST', 'GET'])
 def generateReport():
     if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
         db = connection_db('postgres','frerard2203')
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
         with db:
@@ -245,12 +253,12 @@ def generateReport():
                 return redirect(url_for('index'))
 
     return render_template('report.html', manager=user_is_manager, title="Генерация отчета по заданиям.")
+#генерация отчета по заданиям для конкретного работника в формате csv
 @app.route('/task-report', methods=['POST', 'GET'])
 def generate_task_report():
     if 'current_user' in session:
-        user = {'employee_login': session.get('current_user', 'secret')[4]}
         db = connection_db('postgres','frerard2203')
-        position_user = getPositionUser(session.get('current_user', 'secret')[0], db)
+        position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
         with db:

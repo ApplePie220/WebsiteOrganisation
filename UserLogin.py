@@ -1,6 +1,7 @@
 from FDataBase import *
 from flask_login import UserMixin # уже в себе реализует is_authenticated, is_anonumoys, is_active
 
+#Создаем пользователя в сессии
 class UserLogin(UserMixin):
     def from_DB(self, user_id, db):
         self.__user = getUser(user_id, db)
