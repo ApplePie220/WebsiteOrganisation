@@ -50,7 +50,7 @@ def addtask(status, contract, author, executor, description, client, priority, d
     try:
         with db.cursor() as cursor:
             cursor.execute("CALL add_task(%s,%s,%s,%s,%s,%s,%s)",
-                           (description, status, contract, author, client, executor, priority))
+                           (description, status, contract, author,executor, client, priority))
             # db.commit()
     except Exception as e:
         print("Ошибкад добавления задачи " + e)

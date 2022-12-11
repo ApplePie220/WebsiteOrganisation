@@ -56,7 +56,7 @@ def login():
         user_login = request.form.get('username')
         enter_pass = request.form.get('psw')
         if user_login and enter_pass:
-            db = connection_db(user_log="postgres", user_pass="frerard2203")
+            db = connection_db(user_log="postgres", user_pass="74NDF*305c")
             with db:
 
                 #сравниваем введенный пароль с паролем в бд
@@ -86,7 +86,7 @@ def login():
 @app.route('/register', methods=["POST", "GET"])
 def register():
     if request.method == "POST":
-        db = connection_db("postgres", "frerard2203")
+        db = connection_db("postgres", "74NDF*305c")
         with db:
             if len(request.form['name']) > 0 and len(request.form['username']) > 0 \
                     and len(request.form['psw']) > 3 and request.form['psw'] == request.form['psw2']:
@@ -239,7 +239,7 @@ def profile():
 @app.route('/report', methods=['POST', 'GET'])
 def generateReport():
     if 'current_user' in session:
-        db = connection_db('postgres','frerard2203')
+        db = connection_db('postgres','74NDF*305c')
         position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
@@ -257,7 +257,7 @@ def generateReport():
 @app.route('/task-report', methods=['POST', 'GET'])
 def generate_task_report():
     if 'current_user' in session:
-        db = connection_db('postgres','frerard2203')
+        db = connection_db('postgres','74NDF*305c')
         position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
