@@ -1,16 +1,16 @@
-body {
-    font: 100% Roboto, sans-serif;
-    color: #38015d;
-
+html, body {
+    font: 100% "Trebuchet MS", sans-serif;
+    color: #670046;
+    background: #ffe5f7;
 }
 
 a {
-    color: #9331d9;
+    color: #830632;
     text-decoration: none;
 }
 
 a:hover {
-    color: #25013b;
+    color: #e17499;
     text-decoration: underline;
 }
 
@@ -20,11 +20,11 @@ a:hover {
 
 ul.mainmenu {
     list-style: none;
-    background: #f3b7f6;
+    background: #830632;
     height: 60px;
     margin: 0;
     padding: 0;
-    color: #38015d;
+
     font-size: 20px;
     overflow: hidden;
 
@@ -38,12 +38,12 @@ ul.mainmenu li {
 ul.mainmenu li.last {float: right}
 
 ul.mainmenu li a{
-    color: #38015d;
+    color: #ffe5f7;
     text-decoration: none;
 }
 
 ul.mainmenu li a:hover{
-    color: #760079;
+    color: #f89ad8;
 }
 
 div.content {
@@ -58,20 +58,6 @@ div.content {
 .form-contact p {margin: 10px 0 10px 0;}
 .form-contact input[type=submit], textarea {
     font-size: 16px;
-}
-
-.flash {
-    padding: 10px;
-}
-
-.flash.success{
-    border: 1px solid #6b91f6;
-    background: #c5d6ff;
-}
-
-.flash.error {
-    border: 1px solid #830632;
-    background: #fa6497;
 }
 
 ul.list-posts {
@@ -133,14 +119,49 @@ ul.list-clients .lastname {
 
 .profile-panel {padding: 0 0 0 10px;}
 
-ul.profile-info{
+#prof_form {
+    width: 250px;
+    margin: 50px auto 0 auto;
+    padding: 10px;
+    background: #fcaae3;
+    box-shadow: 5px 5px 10px #494346;
+    border-radius: 8px;
+}
+ul.profile-info {
     list-style: none;
-    margin: 10px 0 0 0;
     padding: 0;
-    color: #760079;
+    margin: 20px 20px 20px 20px;
+    color: #830632;
 }
 
-ul.profile-info li {margin-top: 10px;}
+ul.profile-info li {
+    margin-top: 10px;
+}
+
+#prof_form p{
+    margin: 20px 20px 20px 20px;
+    padding-top: 10px;
+    border-top: 1px solid #46021b;
+    text-align: center;
+}
+
+.flash {
+    padding: 10px;
+}
+
+.flash.success{
+    background: #6b91f6;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
+
+.flash.error {
+    background: #a80b43;
+    color: white;
+    font-size: 18px;
+    text-align: center;
+}
 
 .search{
   border: 1px solid #ccc;
