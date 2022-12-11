@@ -4,16 +4,6 @@ html, body {
     background: #ffe5f7;
 }
 
-a {
-    color: #830632;
-    text-decoration: none;
-}
-
-a:hover {
-    color: #e17499;
-    text-decoration: underline;
-}
-
 .clear {
     clear: both;
 }
@@ -47,40 +37,51 @@ ul.mainmenu li a:hover{
 }
 
 div.content {
-    margin: 10px;
+    width: auto;
+    margin: 10px 600px 10px 600px;
+
 }
+
+.list-posts{
+    display: flex;
+    flex-wrap: wrap;
+    width: auto;
+    align-items: center;
+    justify-content: space-around;
+}
+
+.list-posts .task{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
+}
+
+.list-posts .title {
+    margin: 0;
+    padding: 10px;
+    background: #fcddff;
+    border-radius: 8px;
+}
+
+.list-posts .annonce {
+    margin: 0;
+    padding: 5px 10px 5px 10px;
+}
+
 
 .form-contact label{
     display: inline-block;
     min-width: 80px;
+
 }
 
 .form-contact p {margin: 10px 0 10px 0;}
 .form-contact input[type=submit], textarea {
     font-size: 16px;
-}
-
-ul.list-posts {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-width: 600px;
-}
-
-ul.list-posts li {
-    margin: 20px 0 0 0;
-    border: 1px solid #f3b7f6;
-}
-
-ul.list-posts .title {
-    margin: 0;
-    padding: 5px;
-    background: #f3b7f6;
-}
-
-ul.list-posts .annonce {
-    margin: 0;
-    padding: 10px 5px 10px 5px;
 }
 
 ul.list-clients {
@@ -105,22 +106,8 @@ ul.list-clients .lastname {
     padding: 10px 5px 10px 5px;
 }
 
-.profile-load {
-    margin-top: 10px;
-    overflow: hidden;
-    max-width: 150px;
-}
-
-.profile-load p{
-    padding: 0;
-    margin: 5px 0 0 0;
-
-}
-
-.profile-panel {padding: 0 0 0 10px;}
-
 #prof_form {
-    width: 250px;
+    width: 300px;
     margin: 50px auto 0 auto;
     padding: 10px;
     background: #fcaae3;
@@ -139,10 +126,15 @@ ul.profile-info li {
 }
 
 #prof_form p{
-    margin: 20px 20px 20px 20px;
     padding-top: 10px;
     border-top: 1px solid #46021b;
     text-align: center;
+
+}
+
+#prof_form a:hover {
+    color: #830632;
+    text-decoration: underline;
 }
 
 .flash {

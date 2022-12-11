@@ -53,6 +53,12 @@ p{
     border-top: 1px solid #520320;
     text-align: center;
 }
+
+a:hover{
+    color: #830632;
+    text-decoration: underline;
+}
+
 .flash {
     padding: 10px;
 }
