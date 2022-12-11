@@ -6,9 +6,10 @@
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
 
-<form action="" method="post" class="form-contact">
-    <p><label>Путь сохранения: </label><input type="text" placeholder="Введите путь" name="path", value="" required />
-    <p><input type="submit" value="Получить отчет" />
-
-</form>
+    <div id="report-form">
+        <form action="" method="post" class="form-contact">
+            <p class="report">Путь сохранения: <input type="text" placeholder="Введите путь" name="path", value="" required />
+            <p><input class="rep_button" type="submit" value="Получить отчет" />
+        </form>
+    </div>
 {% endblock %}

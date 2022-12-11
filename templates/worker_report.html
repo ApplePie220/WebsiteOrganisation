@@ -5,13 +5,13 @@
 {% for cat, msg in get_flashed_messages(True) %}
     <div class="flash {{ cat }}">{{ msg }}</div>
 {% endfor %}
-
-<form action="" method="post" class="form-contact">
-    <p><label>Номер сотрудника: </label><input type="text" placeholder="Введите id" name="id", value="" required />
-    <p><label>Начало периода: </label><input type="text" placeholder="Введите дату" name="start", value="" required />
-    <p><label>Конец периода: </label><input type="text" placeholder="Введите дату" name="finish", value="" required />
-    <p><label>Путь сохранения: </label><input type="text" placeholder="Введите путь" name="path", value="" required />
-    <p><input type="submit" value="Получить отчет" />
-
-</form>
+    <div id="report-form">
+        <form action="" method="post" class="form-contact">
+            <p class="report">Номер сотрудника: <input type="text" placeholder="Введите id" name="id" value="" required />
+            <p class="report">Начало периода: <input type="text" placeholder="Введите дату" name="start" value="" required />
+            <p class="report">Конец периода: <input type="text" placeholder="Введите дату" name="finish" value="" required />
+            <p class="report">Путь сохранения: <input type="text" placeholder="Введите путь" name="path" value="" required />
+            <p><input class="rep_button" type="submit" value="Получить отчет" />
+        </form>
+    </div>
 {% endblock %}

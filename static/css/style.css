@@ -72,38 +72,81 @@ div.content {
     padding: 5px 10px 5px 10px;
 }
 
-
-.form-contact label{
-    display: inline-block;
-    min-width: 80px;
-
+.list-posts .clients{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
 }
 
-.form-contact p {margin: 10px 0 10px 0;}
-.form-contact input[type=submit], textarea {
+.list-posts .client{
+    width: 400px;
+    border-radius: 8px;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #fcaae3;
+    color: #830632;
+    box-shadow: 5px 5px 10px #494346;
+    margin: 20px 20px 20px 20px;
+}
+
+#report-form {
+    width: 350px;
+    margin: 50px auto 0 auto;
+    padding: 10px;
+    background: #fcaae3;
+    box-shadow: 5px 5px 10px #494346;
+    border-radius: 8px;
+}
+
+.report {
+    width: 200px;
+    border: none;
+    background: #fcaae3;
     font-size: 16px;
+    padding: 0 0 0 20px;
+
 }
 
-ul.list-clients {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    max-width: 600px;
+.rep_button {
+    font-size: 16px;
+    border-radius: 4px;
+    border: 3px solid #520320;
+    background: #830632;
+    color: white;
+    margin: 10px 0 10px 10px;
+    padding: 1% 30%;
 }
 
-ul.list-clients li {
-    margin: 20px 0 0 0;
-    border: 1px solid #f3b7f6;
+form .search {
+    width: auto;
+    margin: 50px auto auto 600px;
+    background: #ffe5f7;
+    border: 1px solid #830632;
+    display: inline-block;
+    border-radius: 3px;
+    font-size: 20px;
 }
 
-ul.list-clients .identic {
-    margin: 0;
-    padding: 5px;
-    background: #f3b7f6;
+input {
+    padding:4px 10px;
+    border:0;
+    font-size:16px;
+  }
+
+form button{
+    width: 40px;
+    height: 25px;
+    background: #fa6497;
+    color: #570120;
+    border: 1px solid #830632;
+    border-radius: 3px;
 }
-ul.list-clients .lastname {
-    margin: 0;
-    padding: 10px 5px 10px 5px;
+
+form button:hover{
+    background: #fcaae3;
 }
 
 #prof_form {
@@ -137,6 +180,17 @@ ul.profile-info li {
     text-decoration: underline;
 }
 
+.form-contact label{
+    display: inline-block;
+    min-width: 80px;
+
+}
+
+.form-contact p {margin: 10px 0 10px 0;}
+.form-contact input[type=submit], textarea {
+    font-size: 16px;
+}
+
 .flash {
     padding: 10px;
 }
@@ -153,20 +207,6 @@ ul.profile-info li {
     color: white;
     font-size: 18px;
     text-align: center;
-}
-
-.search{
-  border: 1px solid #ccc;
-  display: inline-block;
-  border-radius: 3px;
-  font-size: 20px;
-}
-[type='search']{
-  border: none;
-  outline: none;
-}
-.fas.fa-search{
-  color: #ccc;
 }
 
 input[type=text]::-ms-clear {
