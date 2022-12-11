@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <link type="text/css" href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet" />
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html"; charset="UTF-8">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}"  />
 {% block title -%}
         {% if title %}
             <title>{{ title }}</title>
