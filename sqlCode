@@ -1,0 +1,401 @@
+CREATE TABLE organisation
+(
+	organisation_number smallint PRIMARY KEY,
+	organisation_name varchar(50) NOT NULL,
+	organisation_email varchar(30) NOT NULL UNIQUE,
+	organisation_postal_address text NOT NULL,
+	organisation_phone numeric(11) NOT NULL UNIQUE,
+	organisation_city varchar(80) NOT NULL
+);
+
+CREATE TABLE client
+(
+	client_number smallint PRIMARY KEY,
+	client_name varchar(50) NOT NULL,
+	client_phone numeric(11) NOT NULL UNIQUE,
+	client_email varchar(30) NOT NULL UNIQUE,
+	client_postal_address text NOT NULL,
+	client_city varchar(80) NOT NULL,
+	organisation_number smallint NOT NULL REFERENCES organisation(organisation_number)
+);
+
+CREATE TABLE contract
+(
+	contract_number serial  PRIMARY KEY,
+	contract_description text,
+	client_number smallint NOT NULL REFERENCES client(client_number)
+
+);
+
+CREATE TABLE position_identify
+(
+	position_id smallint PRIMARY KEY,
+	position_name varchar(50) NOT NULL
+);
+
+CREATE TABLE employee
+(
+	employee_number serial PRIMARY KEY,
+	employee_name varchar(80) NOT NULL,
+	employee_email varchar(40) NOT NULL UNIQUE,
+	employee_phone numeric(11) NOT NULL UNIQUE,
+	employee_login varchar(30) NOT NULL UNIQUE,
+	employee_password text NOT NULL,
+	position_id smallint NOT NULL REFERENCES position_identify(position_id)
+);
+
+CREATE TABLE priority_identify
+(
+	priority_number smallint PRIMARY KEY,
+	priority_name varchar(30) NOT NULL
+);
+
+CREATE TABLE task
+(
+	task_number serial PRIMARY KEY,
+	creation_date date,
+	finish_date date,
+	deadline_date date,
+	acception_date date,
+	task_description text NOT NULL,
+	task_status BOOLEAN NOT NULL DEFAULT FALSE,
+	contract_number smallint REFERENCES contract(contract_number),
+	author_number smallint REFERENCES employee(employee_number),
+	executor_number smallint REFERENCES employee(employee_number),
+	client_number smallint NOT NULL REFERENCES client(client_number),
+	task_priority smallint NOT NULL REFERENCES priority_identify(priority_number)
+);
+
+CREATE TABLE technical_equipment
+(
+	technical_equip_number smallint PRIMARY KEY,
+	technical_serial_number varchar(30) NOT NULL UNIQUE,
+	technical_equip_type varchar(60) NOT NULL,
+	technical_equip_weight real NOT NULL
+
+);
+
+CREATE TABLE technical_equipment_task
+(
+	technical_equip_number smallint NOT NULL REFERENCES technical_equipment(technical_equip_number),
+	task_number smallint NOT NULL REFERENCES task(task_number),
+	PRIMARY KEY(technical_equip_number, task_number)
+);
+
+
+INSERT INTO organisation(organisation_number,organisation_name ,organisation_email,
+	organisation_postal_address, organisation_phone, organisation_city)
+VALUES
+(10, 'Stray Parents','delicious@bebra.com','ул. Маленьких котят, д.23','89996663331','Тольятти');
+
+
+INSERT INTO client (client_number, client_name, client_phone, client_email,
+	client_postal_address, client_city, organisation_number)
+VALUES
+(1,'Даниил Милохин',89357663121,'danyacool@mail.ru','ул. Фигуристов, д.1','Тверь',10),
+(2, 'Валерий Меладзе',89126738990,'meladzebest@mail.ru','ул. Звёзд, д.3к1', 'Можайск',10),
+(3, 'Леруа Downthourow',83472904185,'yastalker@outlook.com','ул. Ботов, д.20','Грозный',10);
+
+
+INSERT INTO contract (contract_number,contract_description,client_number)
+VALUES
+(33,'Поставка нового суперкомпьютера в школу №332',3),
+(34,'Гарантийная замена мышки в офисе СДМ-Банка',2),
+(35,'Установка ультрачеткой вебкамеры в офисе Кремля',1);
+
+INSERT INTO position_identify (position_id,position_name)
+VALUES
+(1, 'manager'),
+(2, 'worker');
+
+INSERT INTO technical_equipment (technical_equip_number, technical_serial_number,
+	technical_equip_type, technical_equip_weight)
+VALUES
+(4351,'1384ed695-sd','Вебкамера',0.5),
+(3394,'4893df092-er','Компьютерная мышь',0.2),
+(9049,'485867zk3-gg','Суперкомпьютер',78);
+
+
+INSERT INTO priority_identify(priority_number, priority_name)
+VALUES
+(1, 'Низкий'),
+(2, 'Средний'),
+(3, 'Высокий');
+
+
+-- РОЛИ
+
+DROP OWNED BY manager;
+DROP OWNED BY worker;
+DROP ROLE IF EXISTS worker;
+DROP ROLE IF EXISTS manager;
+CREATE ROLE worker;
+CREATE ROLE manager;
+
+-- Необходимо для того, чтобы созданные политики действовали
+ALTER TABLE task ENABLE ROW LEVEL SECURITY;
+
+-- Просматривать таблицы могут все работники
+GRANT SELECT ON ALL TABLES IN SCHEMA public
+	TO worker, manager;
+
+GRANT CONNECT ON DATABASE organisdb TO worker, manager;
+
+-- Необходимо для возможности генерировать автоматически id задач
+GRANT UPDATE ON task_task_number_seq
+	TO manager;
+
+-- Добавлять новые задания могут только менеджеры
+GRANT INSERT ON client, contract, organisation, task
+	TO manager;
+
+GRANT DELETE ON task
+	TO manager, worker;
+
+CREATE POLICY insert_task ON task
+	FOR INSERT
+	TO manager
+	WITH CHECK (true);
+
+-- SELECT * FROM task;
+-- Обновлять задачу может только автор
+GRANT UPDATE (creation_date, finish_date,task_description,deadline_date,acception_date,
+			  task_status,task_priority, client_number, contract_number) ON task
+TO manager, worker;
+
+-- Политика для автора, чтобы изменять задание
+-- В начале делается проверка на то, что задание еще не выполнено, так как выполненные задания изменять нельзя
+CREATE POLICY update_by_author ON task AS PERMISSIVE
+FOR UPDATE
+TO manager, worker
+USING (true)
+WITH CHECK (((( SELECT employee.employee_login AS login FROM employee
+			  WHERE (task.author_number = employee.employee_number)))::text = CURRENT_USER));
+
+CREATE POLICY update_by_executor ON task AS PERMISSIVE
+FOR UPDATE
+TO manager, worker
+USING (true)
+WITH CHECK (((( SELECT employee.employee_login AS login FROM employee
+			  WHERE (task.executor_number = employee.employee_number)))::text = CURRENT_USER));
+
+-- Обновлять статус задачи, дату завершения и приоритет может автор и исполнитель.
+GRANT UPDATE (task_status, finish_date, task_priority)
+	ON task
+	TO manager, worker;
+
+
+-- Изменять исполнителя задания может только менеджер
+GRANT UPDATE (executor_number)
+	ON task
+	TO manager;
+
+-- Политика для того, чтобы работник и менеджер могли просматривать свои задания.
+CREATE POLICY browse_my_tasks ON task
+	FOR SELECT
+	TO worker, manager
+	USING (
+		(
+			SELECT employee_login FROM employee
+			WHERE (employee_number = author_number)
+		) = CURRENT_USER
+		OR
+		(
+			SELECT employee_login FROM employee
+			WHERE (employee_number = executor_number)
+		) = CURRENT_USER
+	);
+-- SELECT * FROM position_identify
+
+--АВТОМАТИЗАЦИЯ
+
+-- функция создания нового пользователя OLD
+CREATE EXTENSION IF NOT EXISTS pgcrypto;
+CREATE PROCEDURE create_user(employee_name varchar(80), employee_email varchar(40),
+							employee_phone numeric(11), employee_log varchar(30), employee_password text,
+							position_number integer) AS $$
+DECLARE given_role TEXT;
+BEGIN
+	IF (SELECT COUNT(*) FROM pg_roles WHERE rolname = employee_log) THEN
+		RAISE EXCEPTION 'Такой пользователь уже есть.';
+	ELSE
+		INSERT INTO employee(employee_name,employee_email,employee_phone,
+							employee_login, employee_password, position_id)
+		VALUES(employee_name, employee_email, employee_phone, employee_log,
+			  crypt(employee_password, gen_salt('bf')), position_number);
+		EXECUTE format('CREATE ROLE %I WITH LOGIN PASSWORD %L', employee_log, employee_password);
+		given_role := (SELECT position_name FROM position_identify WHERE
+					   position_id	= (SELECT position_id FROM employee WHERE employee_login = employee_log));
+		EXECUTE FORMAT('GRANT %I TO %I', given_role, employee_log);
+		--EXECUTE FORMAT('SET ROLE %I', employee_log);
+		EXECUTE FORMAT('GRANT CONNECT ON DATABASE organisdb TO %I', employee_log);
+	END IF;
+	END;
+	$$ LANGUAGE plpgsql;
+-- SELECT * FROM task;
+
+--NEW
+CREATE OR REPLACE PROCEDURE add_task(
+	IN task_description text,
+	IN task_status boolean,
+	IN contract_number integer,
+	IN author_number integer,
+	IN executor_number integer,
+	IN client_number integer,
+	IN task_priority integer)
+LANGUAGE SQL
+AS $body$
+	INSERT INTO task(task_description, task_status,
+				   contract_number, author_number, executor_number,client_number, task_priority)
+	VALUES (task_description, task_status, contract_number, author_number, executor_number,client_number, task_priority);
+$body$;
+GRANT EXECUTE ON PROCEDURE add_task TO manager;
+GRANT USAGE,UPDATE, SELECT ON SEQUENCE task_task_number_seq TO manager, worker;
+
+-- функция автоматической генерации даты создания при внесении ее в таблицу
+CREATE FUNCTION generate_date() RETURNS TRIGGER
+AS $$
+BEGIN
+UPDATE task SET creation_date = CURRENT_DATE WHERE creation_date IS NULL;
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+
+CREATE TRIGGER trigger_add_date
+AFTER INSERT ON task
+FOR EACH ROW
+EXECUTE FUNCTION generate_date();
+
+GRANT EXECUTE ON FUNCTION generate_date() TO manager;
+-- функция автоматич. генерации даты завершения задания
+CREATE FUNCTION generate_finish_date() RETURNS TRIGGER
+AS $$
+BEGIN
+UPDATE task SET finish_date = CURRENT_DATE WHERE (finish_date IS NULL) AND (task_status = TRUE);
+RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trigger_complete_date
+AFTER UPDATE OF task_status ON task
+FOR EACH ROW
+EXECUTE FUNCTION generate_finish_date();
+
+GRANT EXECUTE ON FUNCTION generate_finish_date() TO manager,worker;
+
+-- Функция удаления задания по истечении 12 месяцев
+-- Создание функции на удаление задания через 12 месяцев
+CREATE OR REPLACE FUNCTION delete_task_after_year() RETURNS trigger AS $$
+BEGIN
+	DELETE FROM task
+	WHERE (task_status = true) AND AGE(CURRENT_DATE, finish_date) > INTERVAL '12 months';
+	RETURN NULL;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER delete_task_after_year_trigger
+BEFORE INSERT OR UPDATE ON task
+FOR EACH STATEMENT
+EXECUTE FUNCTION delete_task_after_year();
+
+GRANT EXECUTE ON FUNCTION delete_task_after_year TO manager,worker;
+-- ИНДЕКСЫ И ВЫГРУЗКА
+
+-- поиск клиентов по их атрибутам
+CREATE INDEX client_name_ind ON client(client_name);
+CREATE INDEX client_city_ind ON client(client_city);
+CREATE INDEX client_email_ind ON client(client_email);
+
+--поиск организации по ее атрибутам
+CREATE INDEX organisation_name_ind ON organisation(organisation_name);
+CREATE INDEX organisation_city_ind ON organisation(organisation_city);
+CREATE INDEX organisation_email_ind ON organisation(organisation_email);
+
+--поиск сотрудника по логину
+CREATE INDEX employee_ind ON employee(employee_login);
+
+-- поиск по автору/исполнителю
+CREATE INDEX executor_task_ind ON task(executor_number);
+CREATE INDEX author_task_ind ON task(author_number);
+-- Функция выгрузки данных в .csv формат
+CREATE OR REPLACE PROCEDURE export_data_employee_csv(employee_number smallint,
+												   start_task date, end_task date, path_file text)
+AS $$
+DECLARE
+	save_values text; -- команда сохранения подсчитанных данных
+	all_tasks int; -- все задания сотрудника
+	succes_completed_tasks int; -- задания, выполненные в срок
+	uncomplet_overdue_task int; -- незавершенные и просроченные задания
+	succes_overdue_task int; -- завершенные, но просроченные задания
+	all_uncomplet_tasks int; -- незавершенные задания с неистекшим временем.
+BEGIN
+	all_tasks := (SELECT COUNT(*) FROM task
+				 WHERE (executor_number = employee_number)
+				 AND (creation_date >= start_task)
+				 AND (creation_date <= end_task));
+
+succes_completed_tasks := (SELECT COUNT(*) FROM task
+						  WHERE (executor_number = employee_number)
+						  AND (finish_date <= deadline_date)
+						  AND (creation_date >= start_task)
+				 		  AND (creation_date <= end_task));
+
+uncomplet_overdue_task := (SELECT COUNT(*) FROM task
+						  WHERE (executor_number = employee_number)
+						  AND (finish_date IS NULL)
+						  AND (deadline_date > NOW())
+						  AND (creation_date >= start_task)
+				 		  AND (creation_date <= end_task));
+
+succes_overdue_task := (SELECT COUNT(*) FROM task
+					    WHERE (executor_number = employee_number)
+					   AND (finish_date > deadline_date)
+					   AND (creation_date >= start_task)
+				 	   AND (creation_date <= end_task));
+
+all_uncomplet_tasks := (SELECT COUNT(*) FROM task
+					    WHERE (executor_number = employee_number)
+						AND (deadline_date <= NOW())
+						AND (finish_date IS NULL)
+						AND (creation_date >= start_task)
+				 	    AND (creation_date <= end_task));
+
+save_values := format('COPY (SELECT %L AS all_tasks,
+					  %L AS succes_completed_tasks,
+					  %L AS uncomplet_overdue_task,
+					  %L AS succes_overdue_task,
+					  %L AS all_uncomplet_tasks)
+					  TO %L CSV HEADER;',
+					  all_tasks, succes_completed_tasks,
+					  uncomplet_overdue_task, succes_overdue_task,
+					  all_uncomplet_tasks, path_file
+					 );
+EXECUTE save_values;
+END $$
+LANGUAGE plpgsql;
+
+GRANT EXECUTE ON FUNCTION export_data_employee_csv TO manager,worker;
+-- DROP PROCEDURE export_report_json
+CREATE OR REPLACE PROCEDURE export_report_json(directory text) AS $$
+BEGIN
+	EXECUTE format('COPY (SELECT json_agg(row_to_json(ts))
+				  FROM (SELECT * FROM task) AS ts) TO %L', directory);
+END;
+$$ LANGUAGE plpgsql;
+
+
+CALL create_user('Валерия Валорантова','lerasaigh@mail.ru',89087774567,'lera','lerasaigh',1);
+CALL create_user('Олег Олегов','olegthing@mail.ru',81349401971,'oleg','olegthing',2);
+CALL create_user('Лилиана Котенкова','linakitty@mail.ru',89934705713,'lina','linakitty',2);
+CALL create_user('Лана Дель Рэй', 'lana@gmail.com',89827361728, 'lanasuper', 'lana1', 2);
+CALL create_user('Мэлс', 'vels@gmail.com',89827361737, 'mels', 'mels1', 1);
+CALL create_user('Дэн', 'dans@gmail.com',89827361733, 'dan', 'dan1', 1);
+CALL create_user('Максим', 'max1@gmail.com',89855361731, 'maxim', 'max1', 1);
+
+CALL add_task('Хорошо поспать и вкусно покушать.',False,35,5,3,2,1)
+INSERT INTO technical_equipment_task(technical_equip_number, task_number)
+VALUES
+(4351,1),
+(3394,1),
+(9049,1);
