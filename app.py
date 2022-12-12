@@ -5,17 +5,18 @@ from UserLogin import UserLogin
 import psycopg2
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = '47fhd2x' #Секретный ключ для сессии
+app.config['SECRET_KEY'] = '47fhd2x'  # Секретный ключ для сессии
 
-#Настройка лоигрования юзера и ограничения доступа к страницам
+# Настройка лоигрования юзера и ограничения доступа к страницам
 login_manager = LoginManager(app)
 login_manager.session_protection = "strong"
 login_manager.login_view = 'login'
 login_manager.login_message = "Пожалуйста, авторизуйтесь  для доступа к закрытым страницам"
 login_manager.login_message_category = "success"
-user_is_manager = False #отображение вкладки с добавл. задания только для менеджера
+user_is_manager = False  # отображение вкладки с добавл. задания только для менеджера
 
-#Подключение к бд
+
+# Подключение к бд
 def connection_db(user_log, user_pass):
     try:
         # подключаемся к бд
@@ -25,7 +26,7 @@ def connection_db(user_log, user_pass):
             password=user_pass,
             database='organisdb'
         )
-        #чтобы все изменения в бд автоматически применялись
+        # чтобы все изменения в бд автоматически применялись
         connection.autocommit = True
         print("PostgreSQL connected")
         return connection
@@ -34,19 +35,22 @@ def connection_db(user_log, user_pass):
         print("ERROR while working with PostgreSQL", _ex)
         return False
 
-#Подключение к бд через логин и пароль юзера
-#Создание юзера в сессии
+
+# Подключение к бд через логин и пароль юзера
+# Создание юзера в сессии
 @login_manager.user_loader
 def load_user(user_id):
     db = connection_db(session.get('current_user', '47fhd2x')[4], session.get('user_password', '47fhd2x'))
     return UserLogin().from_DB(user_id, db)
 
-#отображение страницы с ошибкой
+
+# отображение страницы с ошибкой
 @app.errorhandler(404)
 def pageNotFound(error):
     return render_template('page404.html', title='Страница не найдена', manager=user_is_manager)
 
-#авторизация пользователя
+
+# авторизация пользователя
 @app.route('/login', methods=["POST", "GET"])
 def login():
     if current_user.is_authenticated:  # если юзер уже авторизован, то при переходе на авторизацию
@@ -56,18 +60,18 @@ def login():
         user_login = request.form.get('username')
         enter_pass = request.form.get('psw')
         if user_login and enter_pass:
-            db = connection_db(user_log="postgres", user_pass="74NDF*305c")
+            db = connection_db(user_log="postgres", user_pass="frerard2203")
             with db:
 
-                #сравниваем введенный пароль с паролем в бд
+                # сравниваем введенный пароль с паролем в бд
                 user_password_correct = getPassUserByLogin(user_login, enter_pass, db)
 
-                #если пароль верный, то создаем сессию этого пользователя
+                # если пароль верный, то создаем сессию этого пользователя
                 if user_password_correct:
                     user = getUserByLogin(user_login, db)
                     userlogin = UserLogin().create(user)
 
-                    #для запоминания пользователя в сессии
+                    # для запоминания пользователя в сессии
                     rm = True if request.form.get('remainme') else False
                     login_user(userlogin, remember=rm)
                     session['current_user'] = user
@@ -82,11 +86,11 @@ def login():
     return render_template("login.html", title="Авторизация")
 
 
-#регистрация пользователя
+# регистрация пользователя
 @app.route('/register', methods=["POST", "GET"])
 def register():
     if request.method == "POST":
-        db = connection_db("postgres", "74NDF*305c")
+        db = connection_db("postgres", "frerard2203")
         with db:
             if len(request.form['name']) > 0 and len(request.form['username']) > 0 \
                     and len(request.form['psw']) > 3 and request.form['psw'] == request.form['psw2']:
@@ -104,8 +108,8 @@ def register():
     return render_template('register.html', title="Регистрация")
 
 
-#отображение списка клиентов
-@app.route('/clients', methods=["POST","GET"])
+# отображение списка клиентов
+@app.route('/clients', methods=["POST", "GET"])
 @login_required
 def clients():
     if 'current_user':
@@ -119,12 +123,13 @@ def clients():
                 if not client_id:
                     flash("Введите id клиента для поиска.", "error")
                 else:
-                   return redirect(url_for('showClient',id_client=client_id))
+                    return redirect(url_for('showClient', id_client=client_id))
         clients_list = getClientAnounce(db)
     return render_template('clients_list.html', clients=clients_list,
                            manager=user_is_manager, title="Список клиентов")
 
-#Отображение клиента, которого вводишь в поиске
+
+# Отображение клиента, которого вводишь в поиске
 @app.route('/client/<int:id_client>')
 def showClient(id_client):
     client = None
@@ -135,13 +140,14 @@ def showClient(id_client):
         with db:
             client = findClientById(id_client, db)
             if not client:
-                flash("Клиент с таким id не найден или не существует.","error")
+                flash("Клиент с таким id не найден или не существует.", "error")
                 return redirect(url_for('clients'))
 
     return render_template('client.html', client=client, manager=user_is_manager,
                            title="Информация о клиенте")
 
-#добавление задания
+
+# добавление задания
 @app.route('/add-tasks', methods=["POST", "GET"])
 @login_required
 def addTask():
@@ -169,7 +175,8 @@ def addTask():
             return redirect(url_for('index'))
     return render_template('add_task.html', title='Добавление задания', manager=user_is_manager)
 
-#отображение всех доступных заданий для пользователя
+
+# отображение всех доступных заданий для пользователя
 @app.route('/index')
 @login_required
 def index():
@@ -181,10 +188,10 @@ def index():
         with db:
             print("главная")
     return render_template('index.html', tasks=tasks,
-                           manager=user_is_manager,title="Список заданий")
+                           manager=user_is_manager, title="Список заданий")
 
 
-#отображение конкретного задания и его редактирование
+# отображение конкретного задания и его редактирование
 @app.route('/task/<int:id_task>', methods=['GET', 'POST'])
 @login_required
 def showTask(id_task):
@@ -206,19 +213,18 @@ def showTask(id_task):
                 if not (status or executor or priority or deadline_date or acception_date):
                     flash("Заполните все поля", "error")
                 else:
-                    updateTask(status, executor, priority,description, deadline_date, acception_date, db,
+                    updateTask(status, executor, priority, description, deadline_date, acception_date, db,
                                id_task, user_is_manager)
                     flash("Задание успешно изменено", "success")
                     return redirect(url_for('index'))
         else:
             with db:
                 task = getTask(id_task, db)
-                # return redirect(url_for('showTask', id_task=id_task))
     return render_template('task.html', task=task, manager=user_is_manager,
                            title="Редактор задания")
 
 
-#выход из профиля
+# выход из профиля
 @app.route('/logout')
 @login_required
 def logout():
@@ -226,7 +232,8 @@ def logout():
     flash("Вы вышли из аккаунта", "success")
     return redirect(url_for('login'))
 
-#профиль пользователя
+
+# профиль пользователя
 @app.route('/profile')
 @login_required
 def profile():
@@ -235,11 +242,12 @@ def profile():
     user_is_manager = True if position_user['position_id'] == 1 else False
     return render_template("profile.html", title="Профиль", manager=user_is_manager)
 
-#генерация отчета по заданиям в формате json
+
+# генерация отчета по заданиям в формате json
 @app.route('/report', methods=['POST', 'GET'])
 def generateReport():
     if 'current_user' in session:
-        db = connection_db('postgres','74NDF*305c')
+        db = connection_db('postgres', 'frerard2203')
         position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
@@ -253,23 +261,25 @@ def generateReport():
                 return redirect(url_for('index'))
 
     return render_template('report.html', manager=user_is_manager, title="Генерация отчета по заданиям.")
-#генерация отчета по заданиям для конкретного работника в формате csv
+
+
+# генерация отчета по заданиям для конкретного работника в формате csv
 @app.route('/task-report', methods=['POST', 'GET'])
 def generate_task_report():
     if 'current_user' in session:
-        db = connection_db('postgres','74NDF*305c')
+        db = connection_db('postgres', 'frerard2203')
         position_user = getPositionUser(session.get('current_user', '47fhd2x')[0], db)
         user_is_manager = True if position_user['position_id'] == 1 else False
     if request.method == "POST":
         with db:
-            id =request.form.get('id')
-            start_date= request.form.get('start')
+            id = request.form.get('id')
+            start_date = request.form.get('start')
             finish_date = request.form.get('finish')
             path = request.form.get('path')
             if not (path or id or start_date or finish_date):
                 flash("Заполните все поля!", "error")
             else:
-                get_report_task(path, start_date, finish_date,id, db)
+                get_report_task(path, start_date, finish_date, id, db)
                 flash("Отчет успешно сформирован по указанному пути.", "success")
                 return redirect(url_for('index'))
 
